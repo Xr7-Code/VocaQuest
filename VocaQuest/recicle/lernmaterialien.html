@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lernmaterialien – LateinGame</title>
+
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="assets/icons/icon-192.png" type="image/png">
+    <meta name="theme-color" content="#222831">
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        main {
+            max-width: 1600px;
+            /* Etwas breiter für PC */
+            margin: 3rem auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            /* Zentriert h1 und Suchleiste */
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--color-accent);
+        }
+
+        #search-bar {
+            width: 100%;
+            max-width: 500px;
+            padding: 0.9rem 1rem;
+            font-size: 1.1rem;
+            border-radius: 10px;
+            border: none;
+            margin-bottom: 2rem;
+            background: #2c323a;
+            color: var(--color-light);
+        }
+
+        #lektionen {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            /* Zwei Karten nebeneinander */
+            gap: 2rem;
+            width: 100%;
+        }
+
+        .lektion-container {
+            background: var(--color-mid);
+            padding: 1.5rem;
+            border-radius: 16px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+            transition: transform 0.25s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            /* Abstand zwischen den Vokabeln */
+        }
+
+        .lektion-container:hover {
+            transform: scale(1.01);
+        }
+
+        .lektion-container h2 {
+            color: var(--color-accent);
+            margin-top: 0;
+            margin-bottom: 1rem;
+        }
+
+        /* Schriftgröße der Wörter in den Lektionskarten kleiner */
+        .vokabel-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid #444;
+            color: var(--color-light);
+            font-size: 0.95rem;
+            flex-wrap: wrap;
+            /* Lange Wörter umbrechen */
+            word-break: break-word;
+            /* Sehr lange Wörter umbrechen */
+            gap: 1rem;
+            /* Abstand zwischen Latein und Deutsch */
+        }
+
+        .vokabel-item:last-child {
+            border-bottom: none;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Mobile Ansicht (max 768px) */
+        @media (max-width: 768px) {
+            #lektionen {
+                grid-template-columns: 1fr;
+            }
+
+            .vokabel-item {
+                font-size: 1rem;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <div class="logo">
+            <img src="/assets/Logo.png" alt="LateinGame Logo">
+            LateinGame
+        </div>
+        <div class="nav-links">
+            <a href="index.html">Start</a>
+            <a href="#" class="active">LeMa</a>
+            <a href="karteikarten.html">Karteikarten</a>
+            <a href="tests.html">Tests</a>
+            <a href="videos.html">Videos</a>
+        </div>
+    </nav>
+
+    <main>
+
+        <h1>Lernmaterialien / Vokabelübersicht</h1>
+
+        <input type="text" id="search-bar" placeholder="Vokabeln durchsuchen …">
+
+        <div id="lektionen"></div>
+    </main>
+
+    <footer>
+        © 2025 LateinGame – <a href="https://retrobyte-interactive.netlify.app/">RetroByte-Interactive</a>
+    </footer>
+
+    <script>
+        let vokabelDaten = {};
+
+        async function ladeVokabeln() {
+            try {
+                const response = await fetch("vokabeln.json");
+                vokabelDaten = await response.json();
+                renderLektionen(vokabelDaten);
+            } catch (err) {
+                console.error("Fehler beim Laden:", err);
+            }
+        }
+
+        function renderLektionen(data) {
+            const container = document.getElementById("lektionen");
+            container.innerHTML = "";
+
+            Object.keys(data).forEach(lektionName => {
+                const lektionDiv = document.createElement("div");
+                lektionDiv.className = "lektion-container";
+                lektionDiv.dataset.lektion = lektionName.toLowerCase();
+
+                const title = document.createElement("h2");
+                title.textContent = lektionName;
+
+                const liste = document.createElement("div");
+
+                data[lektionName].forEach(vok => {
+                    const item = document.createElement("div");
+                    item.className = "vokabel-item";
+                    item.dataset.search =
+                        (vok.latein + " " + vok.deutsch).toLowerCase();
+
+                    item.innerHTML = `
+                        <span>${vok.latein}</span>
+                        <span>${vok.deutsch}</span>
+                    `;
+
+                    liste.appendChild(item);
+                });
+
+                lektionDiv.appendChild(title);
+                lektionDiv.appendChild(liste);
+                container.appendChild(lektionDiv);
+            });
+        }
+
+        document.getElementById("search-bar").addEventListener("input", e => {
+            const query = e.target.value.toLowerCase();
+
+            document.querySelectorAll(".lektion-container").forEach(lektion => {
+                let showLektion = false;
+
+                if (lektion.dataset.lektion.includes(query)) {
+                    showLektion = true;
+                }
+
+                lektion.querySelectorAll(".vokabel-item").forEach(item => {
+                    const match = item.dataset.search.includes(query);
+                    item.classList.toggle("hidden", !match);
+                    if (match) showLektion = true;
+                });
+
+                lektion.classList.toggle("hidden", !showLektion);
+            });
+        });
+
+        ladeVokabeln();
+    </script>
+
+</body>
+
+</html>
