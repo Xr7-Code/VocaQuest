@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil - VocaQuest</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --bg-card: #242424;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --blue: #3b82f6;
+            --green: #10b981;
+            --purple: #8b5cf6;
+            --red: #ef4444;
+            --gold: #f59e0b;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, 
+                #0a0a0a 0%, 
+                #0f0f23 25%, 
+                #1a0f2e 50%, 
+                #0f0f23 75%, 
+                #0a0a0a 100%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--blue), var(--purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        nav {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+        }
+
+        nav a:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        nav a.active {
+            color: var(--blue);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .back-btn {
+            padding: 0.5rem 1rem;
+            background: transparent;
+            border: 1px solid var(--text-secondary);
+            color: var(--text-secondary);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            border-color: var(--blue);
+            color: var(--blue);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem 6rem;
+        }
+
+        /* Profile Header */
+        .profile-header {
+            background: var(--bg-card);
+            padding: 2.5rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, var(--blue), var(--purple));
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            border: 4px solid var(--bg-secondary);
+        }
+
+        .profile-level {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--gold), var(--red));
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .profile-name {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-title {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        /* Stats Overview */
+        .stats-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: center;
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-card:nth-child(1) .stat-value { color: var(--gold); }
+        .stat-card:nth-child(2) .stat-value { color: var(--green); }
+        .stat-card:nth-child(3) .stat-value { color: var(--blue); }
+        .stat-card:nth-child(4) .stat-value { color: var(--purple); }
+
+        /* Section Title */
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        /* Achievements */
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .achievement-card {
+            background: var(--bg-card);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .achievement-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .achievement-card.locked {
+            opacity: 0.5;
+        }
+
+        .achievement-card.locked .achievement-icon-large {
+            filter: grayscale(1);
+        }
+
+        .achievement-icon-large {
+            font-size: 3rem;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .achievement-info {
+            flex: 1;
+        }
+
+        .achievement-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .achievement-description {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .achievement-progress {
+            margin-top: 0.5rem;
+        }
+
+        .progress-bar-small {
+            width: 100%;
+            height: 4px;
+            background: var(--bg-secondary);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill-small {
+            height: 100%;
+            background: linear-gradient(90deg, var(--blue), var(--green));
+            border-radius: 4px;
+        }
+
+        .progress-text {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        /* Learning History */
+        .history-section {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .history-chart {
+            background: var(--bg-secondary);
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+        }
+
+        .history-list {
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .history-item {
+            background: var(--bg-secondary);
+            padding: 1rem;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .history-date {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .history-count {
+            font-weight: 700;
+            color: var(--green);
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-secondary);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: none;
+            justify-content: space-around;
+            padding: 0.75rem 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .bottom-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.75rem;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+            min-width: 60px;
+        }
+
+        .bottom-nav-item .nav-icon {
+            font-size: 1.5rem;
+        }
+
+        .bottom-nav-item:hover,
+        .bottom-nav-item.active {
+            color: var(--blue);
+        }
+
+        .bottom-nav-item.active {
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 8px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                display: none;
+            }
+
+            .profile-header {
+                padding: 2rem 1.5rem;
+            }
+
+            .profile-avatar {
+                width: 100px;
+                height: 100px;
+                font-size: 3rem;
+            }
+
+            .profile-name {
+                font-size: 1.5rem;
+            }
+
+            .stats-overview {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .achievements-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .back-btn {
+                display: none;
+            }
+
+            .bottom-nav {
+                display: flex !important;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .container > * {
+            animation: fadeIn 0.6s ease forwards;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo">VocaQuest</div>
+            <nav>
+                <a href="dashboard.html">Dashboard</a>
+                <a href="learn.html">Lernen</a>
+                <a href="games.html">Spiele</a>
+                <a href="profile.html" class="active">Profil</a>
+                <a href="settings.html">Einstellungen</a>
+            </nav>
+            <button class="back-btn" onclick="location.href='dashboard.html'">← Zurück</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="profile-avatar">🎓</div>
+            <div class="profile-level">Level <span id="userLevel">1</span></div>
+            <h1 class="profile-name">Latein-Schüler</h1>
+            <p class="profile-title">Aufstrebender Lateiner</p>
+        </div>
+
+        <!-- Stats Overview -->
+        <div class="stats-overview">
+            <div class="stat-card">
+                <div class="stat-icon">🔥</div>
+                <div class="stat-value" id="streakDays">0</div>
+                <div class="stat-label">Tage Streak</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📚</div>
+                <div class="stat-value" id="totalVocabs">0</div>
+                <div class="stat-label">Vokabeln gelernt</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⭐</div>
+                <div class="stat-value" id="totalXP">0</div>
+                <div class="stat-label">Erfahrung</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🏆</div>
+                <div class="stat-value" id="achievementCount">0</div>
+                <div class="stat-label">Erfolge</div>
+            </div>
+        </div>
+
+        <!-- Achievements -->
+        <h2 class="section-title">🏆 Erfolge</h2>
+        <div class="achievements-grid">
+            <div class="achievement-card">
+                <div class="achievement-icon-large">🎯</div>
+                <div class="achievement-info">
+                    <div class="achievement-name">Erste Schritte</div>
+                    <div class="achievement-description">Erste Vokabel gelernt</div>
+                </div>
+            </div>
+
+            <div class="achievement-card locked">
+                <div class="achievement-icon-large">🔥</div>
+                <div class="achievement-info">
+                    <div class="achievement-name">Flammenwerfer</div>
+                    <div class="achievement-description">7 Tage Streak erreichen</div>
+                    <div class="achievement-progress">
+                        <div class="progress-bar-small">
+                            <div class="progress-fill-small" style="width: 0%"></div>
+                        </div>
+                        <div class="progress-text">0 / 7 Tage</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="achievement-card locked">
+                <div class="achievement-icon-large">📖</div>
+                <div class="achievement-info">
+                    <div class="achievement-name">Bücherwurm</div>
+                    <div class="achievement-description">50 Vokabeln lernen</div>
+                    <div class="achievement-progress">
+                        <div class="progress-bar-small">
+                            <div class="progress-fill-small" style="width: 0%"></div>
+                        </div>
+                        <div class="progress-text">0 / 50 Vokabeln</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="achievement-card locked">
+                <div class="achievement-icon-large">💯</div>
+                <div class="achievement-info">
+                    <div class="achievement-name">Centurio</div>
+                    <div class="achievement-description">100 Vokabeln lernen</div>
+                    <div class="achievement-progress">
+                        <div class="progress-bar-small">
+                            <div class="progress-fill-small" style="width: 0%"></div>
+                        </div>
+                        <div class="progress-text">0 / 100 Vokabeln</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="achievement-card locked">
+                <div class="achievement-icon-large">⚡</div>
+                <div class="achievement-info">
+                    <div class="achievement-name">Blitzschnell</div>
+                    <div class="achievement-description">Blitzrunde mit 20+ Punkten</div>
+                </div>
+            </div>
+
+            <div class="achievement-card locked">
+                <div class="achievement-icon-large">⚔️</div>
+                <div class="achievement-info">
+                    <div class="achievement-name">Gladiator</div>
+                    <div class="achievement-description">Ersten Boss besiegen</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Learning History -->
+        <div class="history-section">
+            <h2 class="section-title">📈 Lernverlauf</h2>
+            <div class="history-chart">
+                <p>Statistik-Visualisierung kommt bald!</p>
+            </div>
+            <h3 style="margin-bottom: 1rem; font-size: 1.1rem;">Letzte 7 Tage</h3>
+            <div class="history-list">
+                <div class="history-item">
+                    <span class="history-date">Heute</span>
+                    <span class="history-count">0 Vokabeln</span>
+                </div>
+                <div class="history-item">
+                    <span class="history-date">Gestern</span>
+                    <span class="history-count">0 Vokabeln</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="dashboard.html" class="bottom-nav-item">
+            <span class="nav-icon">🏠</span>
+            <span>Home</span>
+        </a>
+        <a href="learn.html" class="bottom-nav-item">
+            <span class="nav-icon">📚</span>
+            <span>Lernen</span>
+        </a>
+        <a href="games.html" class="bottom-nav-item">
+            <span class="nav-icon">🎮</span>
+            <span>Spiele</span>
+        </a>
+        <a href="profile.html" class="bottom-nav-item active">
+            <span class="nav-icon">👤</span>
+            <span>Profil</span>
+        </a>
+        <a href="settings.html" class="bottom-nav-item">
+            <span class="nav-icon">⚙️</span>
+            <span>Settings</span>
+        </a>
+    </nav>
+
+    <script>
+        // Check authentication
+        window.addEventListener('DOMContentLoaded', () => {
+            const VALID_CODES = ['LATEIN2025', 'VOCAQUEST2025'];
+            const savedCode = localStorage.getItem('vocaquest_access_code');
+            
+            if (!savedCode || !VALID_CODES.includes(savedCode)) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            loadProfileData();
+        });
+
+        function loadProfileData() {
+            const userData = JSON.parse(localStorage.getItem('vocaquest_user_data') || '{}');
+            
+            // Update stats
+            document.getElementById('userLevel').textContent = userData.level || 1;
+            document.getElementById('streakDays').textContent = userData.streak || 0;
+            document.getElementById('totalVocabs').textContent = userData.totalLearned || 0;
+            document.getElementById('totalXP').textContent = userData.xp || 0;
+            document.getElementById('achievementCount').textContent = '1'; // Default: erste Schritte
+
+            // Update profile title based on level
+            const level = userData.level || 1;
+            const titles = [
+                'Anfänger',
+                'Aufstrebender Lateiner',
+                'Fortgeschrittener',
+                'Lateinkenner',
+                'Meister',
+                'Latein-Experte'
+            ];
+            const titleIndex = Math.min(Math.floor(level / 5), titles.length - 1);
+            document.querySelector('.profile-title').textContent = titles[titleIndex];
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - VocaQuest</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Dark Theme Colors */
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --bg-card: #242424;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            
+            /* Accent Colors */
+            --blue: #3b82f6;
+            --green: #10b981;
+            --purple: #8b5cf6;
+            --red: #ef4444;
+            --gold: #f59e0b;
+            
+            /* Shadows */
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, 
+                #0a0a0a 0%, 
+                #0f0f23 25%, 
+                #1a0f2e 50%, 
+                #0f0f23 75%, 
+                #0a0a0a 100%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Header Navigation */
+        header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--blue), var(--purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        nav {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+        }
+
+        nav a:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        nav a.active {
+            color: var(--blue);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .logout-btn {
+            padding: 0.5rem 1rem;
+            background: transparent;
+            border: 1px solid var(--red);
+            color: var(--red);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: var(--red);
+            color: white;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        /* Welcome Section */
+        .welcome {
+            text-align: center;
+            padding: 2rem 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .welcome h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        /* Streak Display */
+        .streak-display {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(239, 68, 68, 0.1));
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            margin-top: 1rem;
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+
+        .streak-display .fire {
+            font-size: 1.5rem;
+        }
+
+        .streak-display .streak-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gold);
+        }
+
+        .streak-display .streak-text {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-card .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-card .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-card .stat-detail {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .stat-card:nth-child(1) .stat-value { color: var(--blue); }
+        .stat-card:nth-child(2) .stat-value { color: var(--green); }
+        .stat-card:nth-child(3) .stat-value { color: var(--gold); }
+        .stat-card:nth-child(4) .stat-value { color: var(--purple); }
+
+        /* Quick Actions */
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .action-card {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-color), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .action-card:hover::before {
+            opacity: 1;
+        }
+
+        .action-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .action-card:nth-child(1) { --accent-color: var(--blue); }
+        .action-card:nth-child(2) { --accent-color: var(--purple); }
+        .action-card:nth-child(3) { --accent-color: var(--red); }
+
+        .action-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .action-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .action-card p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Progress Section */
+        .progress-section {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            margin-bottom: 2rem;
+        }
+
+        .level-display {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .level-badge {
+            background: linear-gradient(135deg, var(--gold), var(--red));
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .xp-info {
+            flex: 1;
+        }
+
+        .xp-text {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .xp-bar {
+            width: 100%;
+            height: 12px;
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .xp-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--blue), var(--purple));
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            position: relative;
+        }
+
+        .xp-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Today's Goal */
+        .goal-card {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(139, 92, 246, 0.05));
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .goal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .goal-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .goal-progress {
+            color: var(--blue);
+            font-weight: 700;
+        }
+
+        .goal-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .goal-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--blue), var(--green));
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        /* Achievements Preview */
+        .achievements-preview {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .achievement-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .achievement-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .achievement-icon {
+            font-size: 2rem;
+        }
+
+        .achievement-info h4 {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .achievement-info p {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .achievement-item.locked {
+            opacity: 0.5;
+        }
+
+        .achievement-item.locked .achievement-icon {
+            filter: grayscale(1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                display: none;
+            }
+
+            .welcome h1 {
+                font-size: 2rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .level-display {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .container {
+                padding-bottom: 6rem; /* Space for bottom nav */
+            }
+
+            .logout-btn {
+                display: none;
+            }
+
+            /* Bottom Navigation */
+            .bottom-nav {
+                display: flex !important;
+            }
+        }
+
+        .mobile-menu-btn {
+            display: none;
+        }
+
+        /* Bottom Navigation Bar */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-secondary);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: none;
+            justify-content: space-around;
+            padding: 0.75rem 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .bottom-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.75rem;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+            min-width: 60px;
+        }
+
+        .bottom-nav-item .nav-icon {
+            font-size: 1.5rem;
+        }
+
+        .bottom-nav-item:hover,
+        .bottom-nav-item.active {
+            color: var(--blue);
+        }
+
+        .bottom-nav-item.active {
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 8px;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .container > * {
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        .welcome { animation-delay: 0.1s; }
+        .stats-grid { animation-delay: 0.2s; }
+        .quick-actions { animation-delay: 0.3s; }
+        .progress-section { animation-delay: 0.4s; }
+        .achievements-preview { animation-delay: 0.5s; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo">VocaQuest</div>
+            <nav>
+                <a href="dashboard.html" class="active">Dashboard</a>
+                <a href="learn.html">Lernen</a>
+                <a href="games.html">Spiele</a>
+                <a href="profile.html">Profil</a>
+                <a href="settings.html">Einstellungen</a>
+            </nav>
+            <button class="logout-btn" id="logoutBtn">Logout</button>
+        </div>
+    </header>
+
+    <!-- Bottom Navigation (Mobile) -->
+    <nav class="bottom-nav">
+        <a href="dashboard.html" class="bottom-nav-item active">
+            <span class="nav-icon">🏠</span>
+            <span>Home</span>
+        </a>
+        <a href="learn.html" class="bottom-nav-item">
+            <span class="nav-icon">📚</span>
+            <span>Lernen</span>
+        </a>
+        <a href="games.html" class="bottom-nav-item">
+            <span class="nav-icon">🎮</span>
+            <span>Spiele</span>
+        </a>
+        <a href="profile.html" class="bottom-nav-item">
+            <span class="nav-icon">👤</span>
+            <span>Profil</span>
+        </a>
+        <a href="settings.html" class="bottom-nav-item">
+            <span class="nav-icon">⚙️</span>
+            <span>Settings</span>
+        </a>
+    </nav>
+
+    <div class="container">
+        <!-- Welcome Section -->
+        <section class="welcome">
+            <h1>Willkommen zurück! 👋</h1>
+            <p>Bereit für deine nächste Lern-Session?</p>
+            <div class="streak-display">
+                <span class="fire">🔥</span>
+                <span class="streak-number" id="streakCount">0</span>
+                <span class="streak-text">Tage Streak</span>
+            </div>
+        </section>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Level</div>
+                <div class="stat-value" id="userLevel">1</div>
+                <div class="stat-detail">Anfänger</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Gelernt heute</div>
+                <div class="stat-value" id="learnedToday">0</div>
+                <div class="stat-detail">Vokabeln</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Gesamt</div>
+                <div class="stat-value" id="totalLearned">0</div>
+                <div class="stat-detail">Vokabeln gemeistert</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Erfolgsrate</div>
+                <div class="stat-value" id="successRate">0%</div>
+                <div class="stat-detail">Letzte 7 Tage</div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <h2 class="section-title">Schnellzugriff</h2>
+        <div class="quick-actions">
+            <div class="action-card" onclick="location.href='learn.html'">
+                <span class="action-icon">📚</span>
+                <h3>Vokabeln lernen</h3>
+                <p>Starte eine neue Lern-Session mit Spaced Repetition</p>
+            </div>
+            <div class="action-card" onclick="location.href='games.html'">
+                <span class="action-icon">🎮</span>
+                <h3>Spiele</h3>
+                <p>Blitzrunde, Memory oder Duell – spielend lernen!</p>
+            </div>
+            <div class="action-card" onclick="location.href='boss.html'">
+                <span class="action-icon">⚔️</span>
+                <h3>Boss-Kampf</h3>
+                <p>Stelle dein Wissen auf die Probe</p>
+            </div>
+        </div>
+
+        <!-- Progress Section -->
+        <div class="progress-section">
+            <h2 class="section-title">Dein Fortschritt</h2>
+            
+            <div class="level-display">
+                <div class="level-badge">Level <span id="levelNumber">1</span></div>
+                <div class="xp-info">
+                    <div class="xp-text">
+                        <span id="currentXP">0</span> / <span id="nextLevelXP">100</span> XP
+                    </div>
+                    <div class="xp-bar">
+                        <div class="xp-fill" id="xpFill" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="goal-card">
+                <div class="goal-header">
+                    <div class="goal-title">📅 Heutiges Ziel</div>
+                    <div class="goal-progress"><span id="goalCurrent">0</span> / <span id="goalTarget">20</span></div>
+                </div>
+                <div class="goal-bar">
+                    <div class="goal-fill" id="goalFill" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Achievements Preview -->
+        <div class="achievements-preview">
+            <h2 class="section-title">Erfolge</h2>
+            <div class="achievement-list">
+                <div class="achievement-item">
+                    <div class="achievement-icon">🎯</div>
+                    <div class="achievement-info">
+                        <h4>Erste Schritte</h4>
+                        <p>Erste Vokabel gelernt</p>
+                    </div>
+                </div>
+                <div class="achievement-item locked">
+                    <div class="achievement-icon">🔥</div>
+                    <div class="achievement-info">
+                        <h4>Flammenwerfer</h4>
+                        <p>7 Tage Streak erreichen</p>
+                    </div>
+                </div>
+                <div class="achievement-item locked">
+                    <div class="achievement-icon">💯</div>
+                    <div class="achievement-info">
+                        <h4>Centurio</h4>
+                        <p>100 Vokabeln lernen</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check authentication
+        window.addEventListener('DOMContentLoaded', () => {
+            const VALID_CODES = ['LATEIN2025', 'VOCAQUEST2025'];
+            const savedCode = localStorage.getItem('vocaquest_access_code');
+            
+            if (!savedCode || !VALID_CODES.includes(savedCode)) {
+                // Not logged in - redirect to landing page
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // Load user data
+            loadUserData();
+        });
+
+        // Logout functionality
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            if (confirm('Möchtest du dich wirklich abmelden?')) {
+                localStorage.removeItem('vocaquest_access_code');
+                window.location.href = 'index.html';
+            }
+        });
+
+        // Load user data from localStorage
+        function loadUserData() {
+            // Initialize default data if not exists
+            if (!localStorage.getItem('vocaquest_user_data')) {
+                const defaultData = {
+                    level: 1,
+                    xp: 0,
+                    streak: 0,
+                    learnedToday: 0,
+                    totalLearned: 0,
+                    successRate: 0,
+                    lastLoginDate: new Date().toDateString(),
+                    dailyGoal: 20
+                };
+                localStorage.setItem('vocaquest_user_data', JSON.stringify(defaultData));
+            }
+
+            // Load data
+            const userData = JSON.parse(localStorage.getItem('vocaquest_user_data'));
+
+            // Update streak
+            const today = new Date().toDateString();
+            if (userData.lastLoginDate !== today) {
+                const lastLogin = new Date(userData.lastLoginDate);
+                const todayDate = new Date(today);
+                const diffDays = Math.floor((todayDate - lastLogin) / (1000 * 60 * 60 * 24));
+                
+                if (diffDays === 1) {
+                    userData.streak++;
+                } else if (diffDays > 1) {
+                    userData.streak = 1;
+                }
+                
+                userData.lastLoginDate = today;
+                userData.learnedToday = 0; // Reset daily counter
+                localStorage.setItem('vocaquest_user_data', JSON.stringify(userData));
+            }
+
+            // Update UI
+            document.getElementById('streakCount').textContent = userData.streak;
+            document.getElementById('userLevel').textContent = userData.level;
+            document.getElementById('learnedToday').textContent = userData.learnedToday;
+            document.getElementById('totalLearned').textContent = userData.totalLearned;
+            document.getElementById('successRate').textContent = userData.successRate + '%';
+            
+            // Level display
+            document.getElementById('levelNumber').textContent = userData.level;
+            const xpForNextLevel = userData.level * 100;
+            document.getElementById('currentXP').textContent = userData.xp;
+            document.getElementById('nextLevelXP').textContent = xpForNextLevel;
+            
+            const xpProgress = (userData.xp / xpForNextLevel) * 100;
+            document.getElementById('xpFill').style.width = xpProgress + '%';
+
+            // Daily goal
+            document.getElementById('goalCurrent').textContent = userData.learnedToday;
+            document.getElementById('goalTarget').textContent = userData.dailyGoal;
+            const goalProgress = (userData.learnedToday / userData.dailyGoal) * 100;
+            document.getElementById('goalFill').style.width = Math.min(goalProgress, 100) + '%';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lernen - VocaQuest</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --bg-card: #242424;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --blue: #3b82f6;
+            --green: #10b981;
+            --purple: #8b5cf6;
+            --red: #ef4444;
+            --gold: #f59e0b;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, 
+                #0a0a0a 0%, 
+                #0f0f23 25%, 
+                #1a0f2e 50%, 
+                #0f0f23 75%, 
+                #0a0a0a 100%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--blue), var(--purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        nav {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+        }
+
+        nav a:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        nav a.active {
+            color: var(--blue);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .back-btn {
+            padding: 0.5rem 1rem;
+            background: transparent;
+            border: 1px solid var(--text-secondary);
+            color: var(--text-secondary);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            border-color: var(--blue);
+            color: var(--blue);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem 6rem;
+        }
+
+        /* Page Title */
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        /* Mode Selection */
+        .mode-selection {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .mode-card {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .mode-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--accent);
+        }
+
+        .mode-card.selected {
+            border-color: var(--accent);
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+        }
+
+        .mode-card:nth-child(1) { --accent: var(--blue); }
+        .mode-card:nth-child(2) { --accent: var(--purple); }
+        .mode-card:nth-child(3) { --accent: var(--green); }
+
+        .mode-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .mode-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: var(--accent);
+        }
+
+        .mode-card p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Learning Area */
+        .learning-area {
+            display: none;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .learning-area.active {
+            display: block;
+        }
+
+        .vocab-card {
+            background: var(--bg-card);
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: center;
+            margin-bottom: 2rem;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .vocab-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--blue), var(--purple));
+        }
+
+        .vocab-question {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .vocab-word {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            color: var(--text-primary);
+        }
+
+        .vocab-input {
+            width: 100%;
+            padding: 1.25rem;
+            font-size: 1.3rem;
+            background: var(--bg-secondary);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: var(--text-primary);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .vocab-input:focus {
+            outline: none;
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        /* Answer Choices (Multiple Choice) */
+        .answer-choices {
+            display: grid;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .choice-btn {
+            padding: 1.25rem;
+            background: var(--bg-secondary);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .choice-btn:hover {
+            border-color: var(--blue);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .choice-btn.correct {
+            border-color: var(--green);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .choice-btn.wrong {
+            border-color: var(--red);
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 1.25rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--blue), var(--purple));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--blue);
+        }
+
+        /* Progress Bar */
+        .session-progress {
+            background: var(--bg-card);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--blue), var(--green));
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        /* Stats */
+        .session-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-item {
+            background: var(--bg-card);
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-item:nth-child(1) .stat-value { color: var(--green); }
+        .stat-item:nth-child(2) .stat-value { color: var(--red); }
+        .stat-item:nth-child(3) .stat-value { color: var(--gold); }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-secondary);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: none;
+            justify-content: space-around;
+            padding: 0.75rem 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .bottom-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.75rem;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+            min-width: 60px;
+        }
+
+        .bottom-nav-item .nav-icon {
+            font-size: 1.5rem;
+        }
+
+        .bottom-nav-item:hover,
+        .bottom-nav-item.active {
+            color: var(--blue);
+        }
+
+        .bottom-nav-item.active {
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 8px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                display: none;
+            }
+
+            .page-header h1 {
+                font-size: 2rem;
+            }
+
+            .vocab-word {
+                font-size: 2.5rem;
+            }
+
+            .session-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .back-btn {
+                display: none;
+            }
+
+            .bottom-nav {
+                display: flex !important;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .container > * {
+            animation: fadeIn 0.6s ease forwards;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo">VocaQuest</div>
+            <nav>
+                <a href="dashboard.html">Dashboard</a>
+                <a href="learn.html" class="active">Lernen</a>
+                <a href="games.html">Spiele</a>
+                <a href="profile.html">Profil</a>
+                <a href="settings.html">Einstellungen</a>
+            </nav>
+            <button class="back-btn" onclick="location.href='dashboard.html'">← Zurück</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>📚 Vokabeln lernen</h1>
+            <p>Wähle deinen Lernmodus und starte deine Session</p>
+        </div>
+
+        <!-- Mode Selection -->
+        <div class="mode-selection" id="modeSelection">
+            <div class="mode-card" data-mode="latin-german">
+                <div class="mode-icon">🇮🇹</div>
+                <h3>Latein → Deutsch</h3>
+                <p>Übersetze lateinische Wörter ins Deutsche</p>
+            </div>
+            <div class="mode-card" data-mode="german-latin">
+                <div class="mode-icon">🇩🇪</div>
+                <h3>Deutsch → Latein</h3>
+                <p>Übersetze deutsche Wörter ins Lateinische</p>
+            </div>
+            <div class="mode-card" data-mode="multiple-choice">
+                <div class="mode-icon">✅</div>
+                <h3>Multiple Choice</h3>
+                <p>Wähle die richtige Übersetzung aus</p>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <button class="btn btn-primary" id="startBtn" style="max-width: 300px; display: none;">
+                Session starten
+            </button>
+        </div>
+
+        <!-- Learning Area -->
+        <div class="learning-area" id="learningArea">
+            <div class="session-progress">
+                <div class="progress-info">
+                    <span>Fortschritt</span>
+                    <span><span id="currentCard">0</span> / <span id="totalCards">20</span></span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div class="session-stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="correctCount">0</div>
+                    <div class="stat-label">Richtig</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="wrongCount">0</div>
+                    <div class="stat-label">Falsch</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="streakCount">0</div>
+                    <div class="stat-label">Streak</div>
+                </div>
+            </div>
+
+            <div class="vocab-card">
+                <div class="vocab-question" id="questionText">Übersetze ins Deutsche:</div>
+                <div class="vocab-word" id="vocabWord">amor</div>
+                
+                <!-- Input Mode -->
+                <div id="inputMode">
+                    <input 
+                        type="text" 
+                        class="vocab-input" 
+                        id="answerInput" 
+                        placeholder="Deine Antwort..."
+                        autocomplete="off"
+                    >
+                </div>
+
+                <!-- Multiple Choice Mode -->
+                <div id="choiceMode" style="display: none;">
+                    <div class="answer-choices" id="answerChoices">
+                        <!-- Dynamically filled -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn btn-secondary" id="skipBtn">Überspringen</button>
+                <button class="btn btn-primary" id="checkBtn">Prüfen</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="dashboard.html" class="bottom-nav-item">
+            <span class="nav-icon">🏠</span>
+            <span>Home</span>
+        </a>
+        <a href="learn.html" class="bottom-nav-item active">
+            <span class="nav-icon">📚</span>
+            <span>Lernen</span>
+        </a>
+        <a href="games.html" class="bottom-nav-item">
+            <span class="nav-icon">🎮</span>
+            <span>Spiele</span>
+        </a>
+        <a href="profile.html" class="bottom-nav-item">
+            <span class="nav-icon">👤</span>
+            <span>Profil</span>
+        </a>
+        <a href="settings.html" class="bottom-nav-item">
+            <span class="nav-icon">⚙️</span>
+            <span>Settings</span>
+        </a>
+    </nav>
+
+    <script>
+        // Check authentication
+        window.addEventListener('DOMContentLoaded', () => {
+            const VALID_CODES = ['LATEIN2025', 'VOCAQUEST2025'];
+            const savedCode = localStorage.getItem('vocaquest_access_code');
+            
+            if (!savedCode || !VALID_CODES.includes(savedCode)) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            initializeLearning();
+        });
+
+        // Sample vocabulary data
+        const vocabulary = [
+            { latin: 'amor', german: 'Liebe', lesson: 1 },
+            { latin: 'terra', german: 'Erde', lesson: 1 },
+            { latin: 'aqua', german: 'Wasser', lesson: 1 },
+            { latin: 'vita', german: 'Leben', lesson: 1 },
+            { latin: 'pax', german: 'Frieden', lesson: 1 },
+            { latin: 'lux', german: 'Licht', lesson: 1 },
+            { latin: 'tempus', german: 'Zeit', lesson: 2 },
+            { latin: 'verbum', german: 'Wort', lesson: 2 },
+            { latin: 'Roma', german: 'Rom', lesson: 2 },
+            { latin: 'patria', german: 'Vaterland', lesson: 2 }
+        ];
+
+        let selectedMode = null;
+        let currentSession = {
+            mode: null,
+            vocabs: [],
+            currentIndex: 0,
+            correct: 0,
+            wrong: 0,
+            streak: 0
+        };
+
+        function initializeLearning() {
+            // Mode selection
+            const modeCards = document.querySelectorAll('.mode-card');
+            const startBtn = document.getElementById('startBtn');
+
+            modeCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    modeCards.forEach(c => c.classList.remove('selected'));
+                    card.classList.add('selected');
+                    selectedMode = card.dataset.mode;
+                    startBtn.style.display = 'inline-block';
+                });
+            });
+
+            startBtn.addEventListener('click', startSession);
+        }
+
+        function startSession() {
+            if (!selectedMode) return;
+
+            currentSession.mode = selectedMode;
+            currentSession.vocabs = [...vocabulary].sort(() => Math.random() - 0.5).slice(0, 20);
+            currentSession.currentIndex = 0;
+            currentSession.correct = 0;
+            currentSession.wrong = 0;
+            currentSession.streak = 0;
+
+            document.getElementById('modeSelection').style.display = 'none';
+            document.getElementById('startBtn').style.display = 'none';
+            document.getElementById('learningArea').classList.add('active');
+
+            loadNextCard();
+        }
+
+        function loadNextCard() {
+            if (currentSession.currentIndex >= currentSession.vocabs.length) {
+                finishSession();
+                return;
+            }
+
+            const vocab = currentSession.vocabs[currentSession.currentIndex];
+            const inputMode = document.getElementById('inputMode');
+            const choiceMode = document.getElementById('choiceMode');
+            const questionText = document.getElementById('questionText');
+            const vocabWord = document.getElementById('vocabWord');
+
+            // Update progress
+            document.getElementById('currentCard').textContent = currentSession.currentIndex + 1;
+            document.getElementById('totalCards').textContent = currentSession.vocabs.length;
+            const progress = ((currentSession.currentIndex + 1) / currentSession.vocabs.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+
+            // Set question based on mode
+            if (currentSession.mode === 'latin-german') {
+                questionText.textContent = 'Übersetze ins Deutsche:';
+                vocabWord.textContent = vocab.latin;
+                inputMode.style.display = 'block';
+                choiceMode.style.display = 'none';
+            } else if (currentSession.mode === 'german-latin') {
+                questionText.textContent = 'Übersetze ins Lateinische:';
+                vocabWord.textContent = vocab.german;
+                inputMode.style.display = 'block';
+                choiceMode.style.display = 'none';
+            } else if (currentSession.mode === 'multiple-choice') {
+                questionText.textContent = 'Wähle die richtige Übersetzung:';
+                vocabWord.textContent = vocab.latin;
+                inputMode.style.display = 'none';
+                choiceMode.style.display = 'block';
+                generateChoices(vocab);
+            }
+
+            document.getElementById('answerInput').value = '';
+            document.getElementById('checkBtn').onclick = checkAnswer;
+            document.getElementById('skipBtn').onclick = skipCard;
+        }
+
+        function generateChoices(correctVocab) {
+            const choices = [correctVocab.german];
+            const otherVocabs = vocabulary.filter(v => v.german !== correctVocab.german);
+            
+            for (let i = 0; i < 3; i++) {
+                const randomVocab = otherVocabs[Math.floor(Math.random() * otherVocabs.length)];
+                if (!choices.includes(randomVocab.german)) {
+                    choices.push(randomVocab.german);
+                }
+            }
+
+            choices.sort(() => Math.random() - 0.5);
+
+            const choicesContainer = document.getElementById('answerChoices');
+            choicesContainer.innerHTML = '';
+
+            choices.forEach(choice => {
+                const btn = document.createElement('button');
+                btn.className = 'choice-btn';
+                btn.textContent = choice;
+                btn.onclick = () => checkChoice(choice, correctVocab.german);
+                choicesContainer.appendChild(btn);
+            });
+        }
+
+        function checkChoice(selected, correct) {
+            const buttons = document.querySelectorAll('.choice-btn');
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                if (btn.textContent === correct) {
+                    btn.classList.add('correct');
+                }
+                if (btn.textContent === selected && selected !== correct) {
+                    btn.classList.add('wrong');
+                }
+            });
+
+            if (selected === correct) {
+                currentSession.correct++;
+                currentSession.streak++;
+            } else {
+                currentSession.wrong++;
+                currentSession.streak = 0;
+            }
+
+            updateStats();
+            setTimeout(() => {
+                currentSession.currentIndex++;
+                loadNextCard();
+            }, 1500);
+        }
+
+        function checkAnswer() {
+            const vocab = currentSession.vocabs[currentSession.currentIndex];
+            const userAnswer = document.getElementById('answerInput').value.trim().toLowerCase();
+            let correctAnswer = '';
+
+            if (currentSession.mode === 'latin-german') {
+                correctAnswer = vocab.german.toLowerCase();
+            } else if (currentSession.mode === 'german-latin') {
+                correctAnswer = vocab.latin.toLowerCase();
+            }
+
+            if (userAnswer === correctAnswer) {
+                currentSession.correct++;
+                currentSession.streak++;
+                document.getElementById('answerInput').style.borderColor = 'var(--green)';
+            } else {
+                currentSession.wrong++;
+                currentSession.streak = 0;
+                document.getElementById('answerInput').style.borderColor = 'var(--red)';
+            }
+
+            updateStats();
+
+            setTimeout(() => {
+                document.getElementById('answerInput').style.borderColor = '';
+                currentSession.currentIndex++;
+                loadNextCard();
+            }, 1000);
+        }
+
+        function skipCard() {
+            currentSession.streak = 0;
+            currentSession.currentIndex++;
+            loadNextCard();
+        }
+
+        function updateStats() {
+            document.getElementById('correctCount').textContent = currentSession.correct;
+            document.getElementById('wrongCount').textContent = currentSession.wrong;
+            document.getElementById('streakCount').textContent = currentSession.streak;
+        }
+
+        function finishSession() {
+            const totalAnswered = currentSession.correct + currentSession.wrong;
+            const accuracy = totalAnswered > 0 ? Math.round((currentSession.correct / totalAnswered) * 100) : 0;
+
+            alert(`Session beendet!\n\nRichtig: ${currentSession.correct}\nFalsch: ${currentSession.wrong}\nGenauigkeit: ${accuracy}%`);
+            
+            location.href = 'dashboard.html';
+        }
+    </script>
+</body>
+</html>
